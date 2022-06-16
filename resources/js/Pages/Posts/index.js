@@ -1,39 +1,73 @@
-import {Component} from "react";
+import { Component } from "react";
 
 class PostsIndex extends Component {
-
     constructor(props) {
         super(props);
 
         this.state = {
-            posts: []
+            posts: [],
+            categories: [],
+            query: {
+                page: 1,
+                category_id: ''
+            }
         }
+
+        this.categoryChanged = this.categoryChanged.bind(this)
     }
 
-    fetchPosts(page=1) {
-        axios.get('/api/posts', {params: { page }})
-            .then(response => this.setState({posts: response.data}) )
+    fetchPosts() {
+        axios.get('/api/posts', { params: this.state.query })
+            .then(response => this.setState({ posts: response.data }))
+    }
+
+    fetchCategories() {
+        axios.get('/api/categories')
+            .then(response => this.setState({ categories: response.data.data }))
     }
 
     pageChanged(url) {
         const fullUrl = new URL(url);
-        const page = fullUrl.searchParams.get('page')
+        this.state.query.page = fullUrl.searchParams.get('page')
 
-        this.fetchPosts(page)
-    }
-
-    componentDidMount() {
         this.fetchPosts()
     }
 
-    RenderPosts() {
+    categoryChanged(event) {
+        this.setState(({
+            query: {
+                category_id: event.target.value,
+                page: 1
+            }
+        }), () => this.fetchPosts())
+    }
+
+    componentDidMount() {
+        this.fetchCategories()
+        this.fetchPosts()
+    }
+
+    renderPosts() {
         return this.state.posts.data.map(post => <tr key={post.id}>
-            <td>{post.id}</td>
-            <td>{post.title}</td>
-            <td>{post.category.name}</td>
-            <td>{post.content}</td>
-            <td>{post.created_at}</td>
+            <td>{ post.id }</td>
+            <td>{ post.title }</td>
+            <td>{ post.category.name }</td>
+            <td>{ post.content }</td>
+            <td>{ post.created_at }</td>
         </tr>);
+    }
+
+    renderCategoryFilter() {
+        const categories = this.state.categories.map(category =>
+            <option key={category.id} value={category.id}>{ category.name }</option>
+        );
+
+        return (
+            <select onChange={this.categoryChanged} className="mt-1 w-full sm:mt-0 sm:w-1/4 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                <option>-- all categories --</option>
+                { categories }
+            </select>
+        )
     }
 
     renderPaginatorLinks() {
@@ -76,6 +110,9 @@ class PostsIndex extends Component {
         return (
             <div className="overflow-hidden overflow-x-auto p-6 bg-white border-gray-200">
                 <div className="min-w-full align-middle">
+                    <div className="mb-4">
+                        { this.renderCategoryFilter() }
+                    </div>
                     <table className="table">
                         <thead className="table-header">
                         <tr>
@@ -97,19 +134,16 @@ class PostsIndex extends Component {
                         </tr>
                         </thead>
                         <tbody className="table-body">
-                            {this.RenderPosts()}
+                        { this.renderPosts() }
                         </tbody>
                     </table>
                     <div className="mt-4">
-                        {this.renderPaginator()}
+                        { this.renderPaginator() }
                     </div>
                 </div>
             </div>
-        );
+        )
     }
-
 }
 
-export default PostsIndex;
-
-
+export default PostsIndex
