@@ -9,11 +9,15 @@ class PostsIndex extends Component {
             categories: [],
             query: {
                 page: 1,
-                category_id: ''
+                category_id: '',
+                order_column: 'id',
+                order_direction: 'desc'
             }
         }
 
         this.categoryChanged = this.categoryChanged.bind(this)
+        this.pageChanged = this.pageChanged.bind(this)
+        this.orderChanged = this.orderChanged.bind(this)
     }
 
     fetchPosts() {
@@ -104,6 +108,37 @@ class PostsIndex extends Component {
         );
     }
 
+    orderColumnIcon(column) {
+        let icon = 'fa-sort';
+        if (this.state.query.order_column === column) {
+            if (this.state.query.order_direction === 'asc') {
+                icon = 'fa-sort-up';
+            } else {
+                icon = 'fa-sort-down';
+            }
+        }
+
+        return (
+            <i className={`fa-solid ${icon}`}></i>
+        )
+
+    }
+
+    orderChanged(column) {
+        let direction = 'asc';
+        if (column === this.state.query.order_column) {
+            direction = this.state.query.order_direction === 'asc' ? 'desc' : 'asc'
+        }
+
+        this.setState(({
+            query: {
+                page: 1,
+                order_column: column,
+                order_direction: direction
+            }
+        }), () => this.fetchPosts())
+    }
+
     render() {
         if (!('data' in this.state.posts)) return;
 
@@ -118,9 +153,21 @@ class PostsIndex extends Component {
                         <tr>
                             <th>
                                 <span>ID</span>
+                                <div>
+                                    <span>ID</span>
+                                    <button onClick={() => this.orderChanged('id')} type="button" className="column-sort">
+                                        { this.orderColumnIcon('id') }
+                                    </button>
+                                </div>
                             </th>
                             <th>
                                 <span>Title</span>
+                                <div>
+                                    <span>Title</span>
+                                    <button onClick={() => this.orderChanged('title')} type="button" className="column-sort">
+                                        { this.orderColumnIcon('title') }
+                                    </button>
+                                </div>
                             </th>
                             <th>
                                 <span>Category</span>
