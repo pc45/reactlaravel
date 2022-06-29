@@ -2330,6 +2330,7 @@ var PostsCreate = /*#__PURE__*/function (_Component) {
       title: '',
       content: '',
       category_id: '',
+      thumbnail: '',
       categories: [],
       errors: {},
       isLoading: false
@@ -2337,6 +2338,7 @@ var PostsCreate = /*#__PURE__*/function (_Component) {
     _this.handleTitleChange = _this.handleTitleChange.bind(_assertThisInitialized(_this));
     _this.handleContentChange = _this.handleContentChange.bind(_assertThisInitialized(_this));
     _this.handleCategoryChange = _this.handleCategoryChange.bind(_assertThisInitialized(_this));
+    _this.handleThumbnailChange = _this.handleThumbnailChange.bind(_assertThisInitialized(_this));
     _this.handleSubmit = _this.handleSubmit.bind(_assertThisInitialized(_this));
     return _this;
   }
@@ -2363,6 +2365,13 @@ var PostsCreate = /*#__PURE__*/function (_Component) {
       });
     }
   }, {
+    key: "handleThumbnailChange",
+    value: function handleThumbnailChange(event) {
+      this.setState({
+        category_id: event.target.files[0]
+      });
+    }
+  }, {
     key: "handleSubmit",
     value: function handleSubmit(event) {
       var _this2 = this;
@@ -2373,11 +2382,12 @@ var PostsCreate = /*#__PURE__*/function (_Component) {
         errors: {},
         isLoading: true
       });
-      axios.post('/api/posts', {
-        title: this.state.title,
-        content: this.state.content,
-        category_id: this.state.category_id
-      }).then(function (response) {
+      var postData = new FormData();
+      postData.append('title', this.state.title);
+      postData.append('content', this.state.content);
+      postData.append('category_id', this.state.category_id);
+      postData.append('thumbnail', this.state.thumbnail);
+      axios.post('/api/posts', postData).then(function (response) {
         return _this2.props.navigate('/');
       })["catch"](function (error) {
         return _this2.setState({
@@ -2406,7 +2416,7 @@ var PostsCreate = /*#__PURE__*/function (_Component) {
       var _this$state$errors, _this$state$errors$fi;
 
       return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-        className: "text-red-600 mt-1",
+        className: "mt-1 text-red-600",
         children: (_this$state$errors = this.state.errors) === null || _this$state$errors === void 0 ? void 0 : (_this$state$errors$fi = _this$state$errors[field]) === null || _this$state$errors$fi === void 0 ? void 0 : _this$state$errors$fi.map(function (message, index) {
           return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
             children: message
@@ -2422,39 +2432,39 @@ var PostsCreate = /*#__PURE__*/function (_Component) {
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("label", {
             htmlFor: "title",
-            className: "block font-medium text-sm text-gray-700",
+            className: "block text-sm font-medium text-gray-700",
             children: "Title"
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("input", {
             value: this.state.title,
             onChange: this.handleTitleChange,
             id: "title",
             type: "text",
-            className: "block mt-1 w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            className: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200  focus:ring-opacity-50"
           }), this.errorMessage('title')]
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
           className: "mt-4",
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("label", {
             htmlFor: "content",
-            className: "block font-medium text-sm text-gray-700",
+            className: "block text-sm font-medium text-gray-700",
             children: "Content"
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("textarea", {
             value: this.state.content,
             onChange: this.handleContentChange,
             id: "content",
             type: "text",
-            className: "block mt-1 w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            className: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
           }), this.errorMessage('content')]
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
           className: "mt-4",
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("label", {
             htmlFor: "category",
-            className: "block font-medium text-sm text-gray-700",
+            className: "block text-sm font-medium text-gray-700",
             children: "Category"
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("select", {
             value: this.state.category_id,
             onChange: this.handleCategoryChange,
             id: "category",
-            className: "block mt-1 w-full rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50",
+            className: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50",
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("option", {
               value: "",
               children: "-- Select category --"
@@ -2465,15 +2475,26 @@ var PostsCreate = /*#__PURE__*/function (_Component) {
               }, index);
             })]
           }), this.errorMessage('category_id')]
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
+          className: "mt-4",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("label", {
+            htmlFor: "thumbnail",
+            className: "block text-sm font-medium text-gray-700",
+            children: "Thumbnail"
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("input", {
+            type: "file",
+            id: "thumbnail",
+            onChange: this.handleThumbnailChange
+          }), this.errorMessage('thumbnail')]
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
           className: "mt-4",
           children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("button", {
             type: "submit",
-            className: "flex items-center px-3 py-2 bg-blue-600 text-white rounded",
+            className: "flex items-center rounded bg-blue-600 px-3 py-2 text-white",
             disabled: this.state.isLoading,
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("svg", {
               role: "status",
-              className: "w-4 h-4 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600 inline ".concat(!this.state.isLoading ? 'hidden' : ''),
+              className: "mr-2 inline h-4 w-4 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600 ".concat(!this.state.isLoading ? 'hidden' : ''),
               viewBox: "0 0 100 101",
               fill: "none",
               xmlns: "http://www.w3.org/2000/svg",
@@ -2645,7 +2666,7 @@ var PostsIndex = /*#__PURE__*/function (_Component) {
       });
       return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("select", {
         onChange: this.categoryChanged,
-        className: "mt-1 w-full sm:mt-0 sm:w-1/4 rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50",
+        className: "mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 sm:mt-0 sm:w-1/4",
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("option", {
           children: "-- all categories --"
         }), categories]
@@ -2664,7 +2685,7 @@ var PostsIndex = /*#__PURE__*/function (_Component) {
           dangerouslySetInnerHTML: {
             __html: link.label
           },
-          className: "relative inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-500 focus:z-10 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150 first:rounded-l-md last:rounded-r-md"
+          className: "relative -ml-px inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium leading-5 text-gray-700 ring-gray-300 transition duration-150 ease-in-out first:rounded-l-md last:rounded-r-md hover:text-gray-500 focus:z-10 focus:border-blue-300 focus:outline-none focus:ring active:bg-gray-100 active:text-gray-700"
         }, index);
       });
     }
@@ -2676,26 +2697,26 @@ var PostsIndex = /*#__PURE__*/function (_Component) {
         "aria-label": "Pagination Navigation",
         className: "flex items-center justify-between",
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
-          className: "hidden sm:flex-1 sm:flex sm:items-center sm:justify-between",
+          className: "hidden sm:flex sm:flex-1 sm:items-center sm:justify-between",
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("p", {
-              className: "text-sm text-gray-700 leading-5",
+              className: "text-sm leading-5 text-gray-700",
               children: ["Showing", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("span", {
                 children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("span", {
                   className: "font-medium",
-                  children: [" ", this.state.posts.meta.from, " "]
+                  children: [' ', this.state.posts.meta.from, ' ']
                 }), "to", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("span", {
                   className: "font-medium",
-                  children: [" ", this.state.posts.meta.to, " "]
+                  children: [' ', this.state.posts.meta.to, ' ']
                 })]
               }), "of", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("span", {
                 className: "font-medium",
-                children: [" ", this.state.posts.meta.total, " "]
+                children: [' ', this.state.posts.meta.total, ' ']
               }), "results"]
             })
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
-              className: "relative z-0 inline-flex shadow-sm rounded-md",
+              className: "relative z-0 inline-flex rounded-md shadow-sm",
               children: this.renderPaginatorLinks()
             })
           })]
@@ -2747,7 +2768,7 @@ var PostsIndex = /*#__PURE__*/function (_Component) {
 
       if (!('data' in this.state.posts)) return;
       return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-        className: "overflow-hidden overflow-x-auto p-6 bg-white border-gray-200",
+        className: "overflow-hidden overflow-x-auto border-gray-200 bg-white p-6 ",
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
           className: "min-w-full align-middle",
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
